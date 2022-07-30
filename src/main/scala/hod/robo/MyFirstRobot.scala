@@ -2,20 +2,40 @@ package hod.robo
 
 import java.awt.Point
 import java.awt.event.{KeyEvent, MouseEvent}
+import scala.util.Random
 
-import robocode.{AdvancedRobot, BattleEndedEvent, BulletHitBulletEvent, BulletHitEvent, BulletMissedEvent, DeathEvent, HitByBulletEvent, HitRobotEvent, HitWallEvent, RobotDeathEvent, RoundEndedEvent, ScannedRobotEvent, SkippedTurnEvent, WinEvent}
+import robocode.{AdvancedRobot, BattleEndedEvent, BulletHitBulletEvent, BulletHitEvent,
+  BulletMissedEvent, DeathEvent, HitByBulletEvent, HitRobotEvent, HitWallEvent, RobotDeathEvent,
+  RoundEndedEvent, ScannedRobotEvent, SkippedTurnEvent, WinEvent}
 
 class MyFirstRobot extends AdvancedRobot {
+  val controls = new Controls(this)
 
-  var cursor:Point = null
+  var schaden      = 0
+  var feindGesehen = false
+  var links        = false
 
-  
-  
-  
+  def zufall = Random.nextBoolean()
+
   override def run(): Unit = {
     while (true) {
-      
-      setTurnRadarLeft(1)
+      controls.pointScannerAt()
+      if (feindGesehen) {
+        setFireBullet(3)
+      } else {
+        setAhead(5)
+        setTurnLeft(2)
+        setTurnGunLeft(3)
+      }
+
+      if schaden > 0 then
+        setAhead(5)
+        if (links) {
+          setTurnLeft(2)
+          setTurnGunRight(2)
+        } else setTurnRight(2)
+        setTurnGunLeft(2)
+        schaden -= 1
       execute()
     }
   }
@@ -29,9 +49,10 @@ class MyFirstRobot extends AdvancedRobot {
     super.onBulletHitBullet(event)
   override def onBulletMissed(event: BulletMissedEvent): Unit =
     super.onBulletMissed(event)
+    feindGesehen = false
   override def onHitByBullet(event: HitByBulletEvent): Unit =
-    super.onHitByBullet(event)
-
+    schaden = 15
+    links = zufall
   override def onHitRobot(event: HitRobotEvent): Unit =
     super.onHitRobot(event)
   override def onHitWall(event: HitWallEvent): Unit =
@@ -39,7 +60,9 @@ class MyFirstRobot extends AdvancedRobot {
   override def onRobotDeath(event: RobotDeathEvent): Unit =
     super.onRobotDeath(event)
   override def onScannedRobot(event: ScannedRobotEvent): Unit =
-    super.onScannedRobot(event)
+    feindGesehen = true
+    event.
+
   override def onWin(event: WinEvent): Unit =
     super.onWin(event)
   override def onRoundEnded(event: RoundEndedEvent): Unit =
