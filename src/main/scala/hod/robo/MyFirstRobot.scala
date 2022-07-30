@@ -1,4 +1,3 @@
-package hod
 package hod.robo
 
 import robocode.AdvancedRobot
