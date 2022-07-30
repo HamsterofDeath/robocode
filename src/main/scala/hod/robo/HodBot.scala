@@ -5,16 +5,22 @@ import java.awt.event.{KeyEvent, MouseEvent}
 
 import robocode.{AdvancedRobot, BattleEndedEvent, BulletHitBulletEvent, BulletHitEvent, BulletMissedEvent, DeathEvent, HitByBulletEvent, HitRobotEvent, HitWallEvent, RobotDeathEvent, RoundEndedEvent, ScannedRobotEvent, SkippedTurnEvent, WinEvent}
 
-class MyFirstRobot extends AdvancedRobot {
+
+class HodBot extends AdvancedRobot {
 
   var cursor:Point = null
-
-  
+  val controls = Controls(this)
+  var buttonDown = false
   
   
   override def run(): Unit = {
     while (true) {
-      
+      if (cursor!=null) {
+        if (buttonDown) {
+          controls.turnTowards(cursor)
+        }
+        controls.aimAt(cursor)
+      }
       setTurnRadarLeft(1)
       execute()
     }
@@ -52,7 +58,15 @@ class MyFirstRobot extends AdvancedRobot {
     super.onKeyReleased(e)
   override def onMousePressed(e: MouseEvent): Unit =
     super.onMousePressed(e)
+    buttonDown = true
   override def onMouseMoved(e: MouseEvent): Unit =
     super.onMouseMoved(e)
     cursor = e.getPoint
+
+  override def onMouseDragged(e: MouseEvent): Unit =
+    super.onMouseDragged(e)
+    cursor = e.getPoint
+  override def onMouseReleased(e: MouseEvent): Unit =
+    super.onMouseReleased(e)
+    buttonDown = false
 }
